@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>EduStream - Streaming Educacional</title>
+    <link rel="stylesheet" href="style.css"> </head>
+<body>
+    <h1>EduStream: Plataforma de Vídeos</h1>
+    
+    <form action="/videos" method="POST">
+        <h3>Cadastrar Novo Vídeo</h3>
+        <input type="text" name="titulo" placeholder="Título do Vídeo" required>
+        <input type="text" name="url" placeholder="Link do Vídeo (YouTube, etc)" required>
+        <textarea name="descricao" placeholder="Breve descrição do conteúdo educacional" rows="3"></textarea>
+        <button type="submit">Cadastrar Vídeo</button>
+    </form>
+
+    <hr style="width: 100%; max-width: 1000px; opacity: 0.2;">
+    
+    <h3>Vídeos Disponíveis</h3>
+    <div id="lista-videos"></div>
+
+    <script>
+        fetch('/api/videos')
+            .then(res => res.json())
+            .then(videos => {
+                const div = document.getElementById('lista-videos');
+                videos.forEach(v => {
+                    div.innerHTML += `
+                        <div class="video-card">
+                            <strong>${v.titulo}</strong><br>
+                            <a href="${v.url}" target="_blank">${v.url}</a>
+                            <p>${v.descricao}</p>
+                        </div>`;
+                });
+            });
+    </script>
+</body>
+</html>

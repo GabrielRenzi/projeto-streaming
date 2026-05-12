@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # Serviço da sua aplicação
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://db:27017/streamingDB
+    depends_on:
+      - db
+    networks:
+      - streaming-net
+
+  # Serviço do Banco de Dados
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - db-data:/data/db
+    networks:
+      - streaming-net
+
+networks:
+  streaming-net:
+    driver: bridge
+
+volumes:
+  db-data:
