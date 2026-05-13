@@ -2,38 +2,98 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>EduStream - Streaming Educacional</title>
-    <link rel="stylesheet" href="style.css"> </head>
+    <title>EduStream - CRUD Completo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
     <h1>EduStream: Plataforma de Vídeos</h1>
     
-    <form action="/videos" method="POST">
-        <h3>Cadastrar Novo Vídeo</h3>
-        <input type="text" name="titulo" placeholder="Título do Vídeo" required>
-        <input type="text" name="url" placeholder="Link do Vídeo (YouTube, etc)" required>
-        <textarea name="descricao" placeholder="Breve descrição do conteúdo educacional" rows="3"></textarea>
-        <button type="submit">Cadastrar Vídeo</button>
+    <form action="/videos" method="POST" id="videoForm">
+        <h3 id="formTitle">Cadastrar Novo Vídeo</h3>
+        <input type="hidden" id="videoId">
+        <input type="text" id="titulo" name="titulo" placeholder="Título do Vídeo" required>
+        <input type="text" id="url" name="url" placeholder="Link do Vídeo" required>
+        <textarea id="descricao" name="descricao" placeholder="Descrição" rows="3"></textarea>
+        <button type="submit" id="btnSubmit">Cadastrar Vídeo</button>
+        <button type="button" id="btnCancelar" style="display:none; background-color: #95a5a6;" onclick="resetForm()">Cancelar Edição</button>
     </form>
 
     <hr style="width: 100%; max-width: 1000px; opacity: 0.2;">
-    
     <h3>Vídeos Disponíveis</h3>
     <div id="lista-videos"></div>
 
     <script>
-        fetch('/api/videos')
-            .then(res => res.json())
-            .then(videos => {
-                const div = document.getElementById('lista-videos');
-                videos.forEach(v => {
-                    div.innerHTML += `
-                        <div class="video-card">
-                            <strong>${v.titulo}</strong><br>
-                            <a href="${v.url}" target="_blank">${v.url}</a>
-                            <p>${v.descricao}</p>
-                        </div>`;
+        const listaDiv = document.getElementById('lista-videos');
+
+        // Função para carregar vídeos
+        function carregarVideos() {
+            fetch('/api/videos')
+                .then(res => res.json())
+                .then(videos => {
+                    listaDiv.innerHTML = '';
+                    videos.forEach(v => {
+                        listaDiv.innerHTML += `
+                            <div class="video-card">
+                                <strong>${v.titulo}</strong><br>
+                                <a href="${v.url}" target="_blank">${v.url}</a>
+                                <p>${v.descricao}</p>
+                                <button onclick="prepararEdicao('${v._id}', '${v.titulo}', '${v.url}', '${v.descricao}')" style="width:auto; padding:5px 10px; background:#f39c12;">Editar</button>
+                                <button onclick="deletarVideo('${v._id}')" style="width:auto; padding:5px 10px; background:#e74c3c;">Excluir</button>
+                            </div>`;
+                    });
                 });
+        }
+
+        // Deletar Vídeo
+        function deletarVideo(id) {
+            if(confirm('Tem certeza que deseja excluir?')) {
+                fetch(`/api/videos/${id}`, { method: 'DELETE' })
+                    .then(() => carregarVideos());
+            }
+        }
+
+        // Preparar Edição (Preenche o formulário)
+        function prepararEdicao(id, titulo, url, desc) {
+            document.getElementById('videoId').value = id;
+            document.getElementById('titulo').value = titulo;
+            document.getElementById('url').value = url;
+            document.getElementById('descricao').value = desc;
+            
+            document.getElementById('formTitle').innerText = "Alterar Vídeo";
+            document.getElementById('btnSubmit').innerText = "Salvar Alterações";
+            document.getElementById('btnCancelar').style.display = "block";
+            document.getElementById('videoForm').action = "javascript:void(0)";
+            document.getElementById('videoForm').onsubmit = salvarEdicao;
+        }
+
+        function salvarEdicao() {
+            const id = document.getElementById('videoId').value;
+            const dados = {
+                titulo: document.getElementById('titulo').value,
+                url: document.getElementById('url').value,
+                descricao: document.getElementById('descricao').value
+            };
+
+            fetch(`/api/videos/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            }).then(() => {
+                resetForm();
+                carregarVideos();
             });
+        }
+
+        function resetForm() {
+            document.getElementById('videoForm').reset();
+            document.getElementById('formTitle').innerText = "Cadastrar Novo Vídeo";
+            document.getElementById('btnSubmit').innerText = "Cadastrar Vídeo";
+            document.getElementById('btnCancelar').style.display = "none";
+            document.getElementById('videoForm').action = "/videos";
+            document.getElementById('videoForm').onsubmit = null;
+        }
+
+        carregarVideos();
     </script>
 </body>
 </html>
