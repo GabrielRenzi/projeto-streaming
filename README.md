@@ -29,7 +29,7 @@ A solução utiliza uma topologia de dois containers principais conectados em um
 ### Comandos Necessários
 1.  **Clonar o repositório:**
     ```bash
-    git clone <URL_DO_SEU_REPOSITORIO_GITHUB>
+    git clone https://github.com/GabrielRenzi/projeto-streaming.git
     cd projeto-streaming
     ```
 
