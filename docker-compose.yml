@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Serviço da sua aplicação
   app:
     build: .
     ports:
@@ -13,7 +12,6 @@ services:
     networks:
       - streaming-net
 
-  # Serviço do Banco de Dados
   db:
     image: mongo
     ports:

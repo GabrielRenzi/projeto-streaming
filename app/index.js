@@ -18,7 +18,6 @@ const Video = mongoose.model('Video', {
   descricao: String
 });
 
-// CREATE: Cadastrar
 app.post('/videos', async (req, res) => {
   const { titulo, url, descricao } = req.body;
   const novoVideo = new Video({ titulo, url, descricao });
@@ -26,20 +25,17 @@ app.post('/videos', async (req, res) => {
   res.redirect('/');
 });
 
-// READ: Listar todos
 app.get('/api/videos', async (req, res) => {
   const videos = await Video.find();
   res.json(videos);
 });
 
-// UPDATE: Alterar informações
 app.put('/api/videos/:id', async (req, res) => {
   const { titulo, url, descricao } = req.body;
   await Video.findByIdAndUpdate(req.params.id, { titulo, url, descricao });
   res.sendStatus(200);
 });
 
-// DELETE: Excluir vídeo
 app.delete('/api/videos/:id', async (req, res) => {
   await Video.findByIdAndDelete(req.params.id);
   res.sendStatus(200);

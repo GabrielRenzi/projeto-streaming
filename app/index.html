@@ -25,7 +25,6 @@
     <script>
         const listaDiv = document.getElementById('lista-videos');
 
-        // Função para carregar vídeos
         function carregarVideos() {
             fetch('/api/videos')
                 .then(res => res.json())
@@ -44,7 +43,6 @@
                 });
         }
 
-        // Deletar Vídeo
         function deletarVideo(id) {
             if(confirm('Tem certeza que deseja excluir?')) {
                 fetch(`/api/videos/${id}`, { method: 'DELETE' })
@@ -52,7 +50,6 @@
             }
         }
 
-        // Preparar Edição (Preenche o formulário)
         function prepararEdicao(id, titulo, url, desc) {
             document.getElementById('videoId').value = id;
             document.getElementById('titulo').value = titulo;
